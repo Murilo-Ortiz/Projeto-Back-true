@@ -34,19 +34,18 @@ public class DentistaController {
     public  ResponseEntity<Void> postDentista(@Valid @RequestBody Dentista dentista) {
         dentistaService.createDentista(dentista);
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id_dentista").buildAndExpand(dentista.getId()).toUri();
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id_dentista}").buildAndExpand(dentista.getId()).toUri();
 
         return ResponseEntity.created(uri).build();
     }
 
     @PutMapping("/{id_dentista}")
-    public ResponseEntity<Void> putDentista(@PathVariable("id_dentista") Long id, @RequestBody Dentista dentista) {
+    public ResponseEntity<Void> putDentista(@PathVariable("id_dentista") Long id, @Valid @RequestBody Dentista dentista) {
         dentista.setId(id);
-
         dentistaService.updateDentista(dentista);
-
         return ResponseEntity.noContent().build();
     }
+
 
     @DeleteMapping("/{id_dentista}")
     public ResponseEntity<Void> deleteDentistaById(@PathVariable("id_dentista") Long id) {

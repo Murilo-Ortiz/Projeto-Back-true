@@ -5,11 +5,13 @@ import java.util.Optional;
 
 import com.gabrielpdev.siso.models.CustomUserDetails;
 import com.gabrielpdev.siso.models.exceptions.AuthorizationException;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.gabrielpdev.siso.models.User;
@@ -79,6 +81,12 @@ public class UserService {
         return user;
     }
 
+    public Long findUserIdByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(User::getId)
+                .orElseThrow(() -> new RuntimeException("User not found")); // Lança exceção se não encontrado
+    }
+
     public User fromDTO(@Valid UserUpdateDTO obj) {
         User user = new User();
         user.setPassword(obj.getPassword());
@@ -117,6 +125,33 @@ public class UserService {
 
     public boolean hasRoot(User obj) {
         return obj.getProfiles().contains("ROOT");
+    }
+
+    @Component
+    public class InitialDataLoader {
+
+        @Autowired
+        private UserService userService;
+
+        @Autowired
+        private UserRepository userRepository;
+
+        @Autowired
+        private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+        @PostConstruct
+        public void init() {
+            // Verifica se o usuário ROOT já existe
+            if (userRepository.findByUsername("rootuser").isEmpty()) {
+                User rootUser = new User();
+                rootUser.setUsername("rootuser");
+                rootUser.setPassword(bCryptPasswordEncoder.encode("rootpassword"));
+                rootUser.setEmail("rootuser@example.com");
+                rootUser.setAtivo(true);
+                rootUser.addProfile("ROOT");
+                userRepository.save(rootUser);
+            }
+        }
     }
 
 }

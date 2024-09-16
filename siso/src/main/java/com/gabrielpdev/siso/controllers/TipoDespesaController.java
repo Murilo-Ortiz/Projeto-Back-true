@@ -34,7 +34,7 @@ public class TipoDespesaController {
     public  ResponseEntity<Void> postTipoDespesa(@Valid @RequestBody TipoDespesa tipoDespesa) {
         tipoDespesaService.createTipoDespesa(tipoDespesa);
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id_tipo_despesa").buildAndExpand(tipoDespesa.getId()).toUri();
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id_tipo_despesa}").buildAndExpand(tipoDespesa.getId()).toUri();
 
         return ResponseEntity.created(uri).build();
     }

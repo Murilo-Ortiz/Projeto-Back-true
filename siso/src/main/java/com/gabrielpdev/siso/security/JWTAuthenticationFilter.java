@@ -46,7 +46,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         String username = customUserDetails.getUsername();
         String token = this.jwtUtil.generateToken(username);
-        response.addHeader("Authorization", "Bearer "+token);
+        response.addHeader("Authorization", "Bearer "+ token);
         response.addHeader("access-control-expose-headers", "Authorization");
     }
 }
